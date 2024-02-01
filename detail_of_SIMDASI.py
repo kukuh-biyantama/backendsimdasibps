@@ -30,85 +30,40 @@ def save_data_to_database(induk, ketersediaan_tahun, id_table):
 
             for data_item in data['data'][1]['data']:
                 try:
-                    variables = data_item.get("variables")
+                    for key, variable in data_item["variables"].items():
+                        value = variable.get('value')
+                        value_raw = variable.get('value_raw')
+                        value_code = variable.get('value_code')
 
-                    if isinstance(variables, list):
-                        # Handle the case where 'variables' is a list
-                        for variable in variables:
-                            value = variable.get('value')
-                            value_raw = variable.get('value_raw')
-                            value_code = variable.get('value_code')
+                        desired_data = {
+                            "judul_tabel": data['data'][1]['judul_tabel'],
+                            "judul_tabel_en": data['data'][1]["judul_tabel_en"],
+                            "lingkup": data['data'][1]["lingkup"],
+                            "lingkup_id": data['data'][1]["lingkup_id"],
+                            "lingkup_en": data['data'][1]["lingkup_en"],
+                            "tahun_data": data['data'][1]["tahun_data"],
+                            "wilayah": data['data'][1]["wilayah"],
+                            "penanggung_jawab": data['data'][1]["penanggung_jawab"],
+                            "show_satuan": data['data'][1]["show_satuan"],
+                            "id_subject": data['data'][1]["id_subject"],
+                            "bab": data['data'][1]["bab"],
+                            "bab_en": data['data'][1]["bab_en"],
+                            "subject": data['data'][1]["subject"],
+                            "subject_en": data['data'][1]["subject_en"],
+                            "mms_id": data['data'][1]["mms_id"],
+                            "mms_subject": data['data'][1]["mms_subject"],
+                            "keterangan_data": json.dumps(data['data'][1]["keterangan_data"]),
+                            "label": data_item.get("label"),
+                            "label_raw": data_item.get("label_raw"),
+                            "satuan": data_item.get("satuan"),
+                            "kode_wilayah": data_item.get("kode_wilayah"),
+                            "variable_key": key,
+                            "variable_value": value,
+                            "variable_value_raw": value_raw,
+                            "variable_value_code": value_code
+                        }
 
-                            desired_data = {
-                                "judul_tabel": data['data'][1]['judul_tabel'],
-                                "judul_tabel_en": data['data'][1]["judul_tabel_en"],
-                                "lingkup": data['data'][1]["lingkup"],
-                                "lingkup_id": data['data'][1]["lingkup_id"],
-                                "lingkup_en": data['data'][1]["lingkup_en"],
-                                "tahun_data": data['data'][1]["tahun_data"],
-                                "wilayah": data['data'][1]["wilayah"],
-                                "penanggung_jawab": data['data'][1]["penanggung_jawab"],
-                                "show_satuan": data['data'][1]["show_satuan"],
-                                "id_subject": data['data'][1]["id_subject"],
-                                "bab": data['data'][1]["bab"],
-                                "bab_en": data['data'][1]["bab_en"],
-                                "subject": data['data'][1]["subject"],
-                                "subject_en": data['data'][1]["subject_en"],
-                                "mms_id": data['data'][1]["mms_id"],
-                                "mms_subject": data['data'][1]["mms_subject"],
-                                "keterangan_data": json.dumps(data['data'][1]["keterangan_data"]),
-                                "label": data_item.get("label"),
-                                "label_raw": data_item.get("label_raw"),
-                                "satuan": data_item.get("satuan"),
-                                "kode_wilayah": data_item.get("kode_wilayah"),
-                                "variable_key": key,
-                                "variable_value": value,
-                                "variable_value_raw": value_raw,
-                                "variable_value_code": value_code
-                            }
-
-                            result_list.append(desired_data)
-
-                    elif isinstance(variables, dict):
-                        # Handle the case where 'variables' is a dictionary
-                        for key, variable in variables.items():
-                            value = variable.get('value')
-                            value_raw = variable.get('value_raw')
-                            value_code = variable.get('value_code')
-
-                            desired_data = {
-                                "judul_tabel": data['data'][1]['judul_tabel'],
-                                "judul_tabel_en": data['data'][1]["judul_tabel_en"],
-                                "lingkup": data['data'][1]["lingkup"],
-                                "lingkup_id": data['data'][1]["lingkup_id"],
-                                "lingkup_en": data['data'][1]["lingkup_en"],
-                                "tahun_data": data['data'][1]["tahun_data"],
-                                "wilayah": data['data'][1]["wilayah"],
-                                "penanggung_jawab": data['data'][1]["penanggung_jawab"],
-                                "show_satuan": data['data'][1]["show_satuan"],
-                                "id_subject": data['data'][1]["id_subject"],
-                                "bab": data['data'][1]["bab"],
-                                "bab_en": data['data'][1]["bab_en"],
-                                "subject": data['data'][1]["subject"],
-                                "subject_en": data['data'][1]["subject_en"],
-                                "mms_id": data['data'][1]["mms_id"],
-                                "mms_subject": data['data'][1]["mms_subject"],
-                                "keterangan_data": json.dumps(data['data'][1]["keterangan_data"]),
-                                "label": data_item.get("label"),
-                                "label_raw": data_item.get("label_raw"),
-                                "satuan": data_item.get("satuan"),
-                                "kode_wilayah": data_item.get("kode_wilayah"),
-                                "variable_key": key,
-                                "variable_value": value,
-                                "variable_value_raw": value_raw,
-                                "variable_value_code": value_code
-                            }
-
-                            result_list.append(desired_data)
-
-                    else:
-                        print(f"Unknown 'variables' type: {type(variables)}")
-
+                        result_list.append(desired_data)
                 except (KeyError, AttributeError) as e:
                     # Skip this data_item if 'variables' is not found or is not a dictionary
                     print(f"Skipping data_item: {data_item}. Error: {e}")
@@ -119,32 +74,32 @@ def save_data_to_database(induk, ketersediaan_tahun, id_table):
 
                 # Tentukan schema dan nama tabel
                 schema = "statistik_bps_simdasi"
-                table_name = "detail_data_SIMDASI"
+                table_name = "table_detail_SIMDASI"
 
                 # Buat tabel jika belum ada
                 create_table_query = f"""
                     CREATE TABLE IF NOT EXISTS {schema}.{table_name} (
                         id SERIAL PRIMARY KEY,
-                        judul_tabel TEXT,
-                        judul_tabel_en TEXT,
-                        lingkup TEXT,
-                        lingkup_id TEXT,
-                        lingkup_en TEXT,
-                        tahun_data TEXT,
-                        wilayah TEXT,
-                        penanggung_jawab TEXT,
-                        show_satuan TEXT,
-                        id_subject TEXT,
-                        bab TEXT,
-                        bab_en TEXT,
-                        subject TEXT,
-                        subject_en TEXT,
+                        judul_tabel VARCHAR(255),
+                        judul_tabel_en VARCHAR(255),
+                        lingkup VARCHAR(255),
+                        lingkup_id VARCHAR(255),
+                        lingkup_en VARCHAR(255),
+                        tahun_data INTEGER,
+                        wilayah VARCHAR(255),
+                        penanggung_jawab VARCHAR(255),
+                        show_satuan BOOLEAN,
+                        id_subject VARCHAR(255),
+                        bab VARCHAR(255),
+                        bab_en VARCHAR(255),
+                        subject VARCHAR(255),
+                        subject_en VARCHAR(255),
                         mms_id INTEGER,
-                        mms_subject TEXT,
+                        mms_subject VARCHAR(255),
                         keterangan_data JSONB,
-                        label TEXT,
-                        label_raw TEXT,
-                        satuan TEXT,
+                        label VARCHAR(255),
+                        label_raw VARCHAR(255),
+                        satuan VARCHAR(255),
                         kode_wilayah VARCHAR(255),
                         variable_key VARCHAR(255),
                         variable_value VARCHAR(255),
@@ -159,14 +114,12 @@ def save_data_to_database(induk, ketersediaan_tahun, id_table):
                     INSERT INTO {schema}.{table_name} (
                         judul_tabel, judul_tabel_en, lingkup, lingkup_id, lingkup_en,
                         tahun_data, wilayah, penanggung_jawab, show_satuan, id_subject,
-                        bab, bab_en, subject, subject_en, mms_id, mms_subject, keterangan_data,
-                        label, label_raw, satuan, kode_wilayah,
+                        bab, bab_en, subject, subject_en, mms_id, mms_subject, keterangan_data,label, label_raw, satuan, kode_wilayah,
                         variable_key, variable_value, variable_value_raw, variable_value_code
                     ) VALUES (
                         %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                     );
                 """
-
                 # Ubah data keterangan_data menjadi format yang sesuai untuk PostgreSQL
                 for row in result_list:
                     cursor.execute(insert_query, (
@@ -211,6 +164,7 @@ def save_data_to_database(induk, ketersediaan_tahun, id_table):
                     conn.close()
 
 
+                
 def process_all_basearea():
     try:
         # Establish a connection to the PostgreSQL database
