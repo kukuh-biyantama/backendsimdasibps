@@ -1,14 +1,24 @@
 import requests
 import psycopg2
 import json
+import schedule
+import time
+
+#process data with job 
+def job():
+    print("Running job to fetch and save data to the database...")
+    process_all_basearea()
+
+# Schedule the job to run every 5 minutes
+schedule.every(5).minutes.do(job)
 
 # Konfigurasi database
 def connDB():
     conn = psycopg2.connect(
-                    host="10.2.130.45",
+                    host="localhost",
                     port="5432",
-                    user="tim2",
-                    password="suropati02",
+                    user="postgres",
+                    password="password",
                     database="produksi"
                 )
     cursor = conn.cursor()
@@ -246,5 +256,11 @@ def process_all_basearea():
 
 if __name__ == "__main__":
     # Jalankan proses untuk semua base area
-    process_all_basearea()
+    # Run the job immediately when the script starts
+    job()
+
+    # Run the scheduler in a loop
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
     #save_data_to_database(1500000, 2022, 'WUptSkZUMDlSbXNYSGJJaHpLaHVrQT09')

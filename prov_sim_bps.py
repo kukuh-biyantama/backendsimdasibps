@@ -16,10 +16,10 @@ def scrape_api_data(api_url):
             # Step 4: Menyimpan Data ke Database (PostgreSQL)
             try:
                 conn = psycopg2.connect(
-                    host="10.2.130.45",
+                    host="localhost",
                     port="5432",
-                    user="tim2",
-                    password="suropati02",
+                    user="postgres",
+                    password="password",
                     database="produksi"
                 )
                 cursor = conn.cursor()
@@ -29,7 +29,7 @@ def scrape_api_data(api_url):
 
                 # Membuat tabel jika belum ada dalam skema
                 cursor.execute(f'''
-                    CREATE TABLE IF NOT EXISTS {schema_name}.simdasi_provinsi (
+                    CREATE TABLE IF NOT EXISTS {schema_name}.SIMDASI_Province (
                         kode INTEGER,
                         nama TEXT,
                         satuan_lingkungan TEXT,
@@ -40,7 +40,7 @@ def scrape_api_data(api_url):
                 # Menyimpan data ke dalam tabel dalam skema
                 for entry in selected_data:
                     cursor.execute(f'''
-                        INSERT INTO {schema_name}.simdasi_provinsi (kode, nama, satuan_lingkungan, satuan_lingkungan_en)
+                        INSERT INTO {schema_name}.SIMDASI_Province (kode, nama, satuan_lingkungan, satuan_lingkungan_en)
                         VALUES (%s, %s, %s, %s)
                     ''', (int(entry['kode']), entry['nama'], entry['satuan_lingkungan'], entry['satuan_lingkungan_en']))
 

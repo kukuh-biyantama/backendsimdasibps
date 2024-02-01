@@ -4,10 +4,10 @@ import psycopg2
 
 def connDB():
     conn = psycopg2.connect(
-                    host="10.2.130.45",
+                    host="localhost",
                     port="5432",
-                    user="tim2",
-                    password="suropati02",
+                    user="postgres",
+                    password="password",
                     database="produksi"
                 )
     cursor = conn.cursor()
